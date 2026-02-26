@@ -1,5 +1,9 @@
 FROM node:20-alpine
 WORKDIR /app
+
+# Dependência requerida para funcionamento estável de Prisma em Alpine.
+RUN apk add --no-cache openssl
+
 COPY package.json package-lock.json* ./
 RUN npm install
 COPY . .
