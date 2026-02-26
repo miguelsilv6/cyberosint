@@ -9,4 +9,4 @@ RUN npm install
 COPY . .
 RUN npx prisma generate && npm run build
 EXPOSE 3000
-CMD ["sh", "-c", "if [ \"$PRISMA_MIGRATE_ON_START\" = \"true\" ]; then npx prisma migrate deploy || npx prisma db push; fi && npm run seed && node dist/main.js"]
+CMD ["sh", "-c", "if [ \"$PRISMA_MIGRATE_ON_START\" = \"true\" ]; then npx prisma migrate deploy; fi && npm run seed && node dist/main.js"]
