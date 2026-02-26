@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { api } from '../api/client';
 
+// Interface mínima para validar fluxo: login -> casos -> artefactos.
 export function App() {
   const [token, setToken] = useState('');
   const [cases, setCases] = useState<any[]>([]);
   const [caseId, setCaseId] = useState('');
   const [artifacts, setArtifacts] = useState<any[]>([]);
 
+  // Login com credenciais seed de desenvolvimento.
   const login = async () => {
     const data = await api('/auth/login', 'POST', { email: 'admin@local', password: 'admin123' });
     setToken(data.accessToken);
   };
 
   const loadCases = async () => setCases(await api('/cases', 'GET', undefined, token));
+  // Cria caso de demonstração para smoke tests.
   const createCase = async () => {
     await api('/cases', 'POST', { name: 'Case Demo', description: 'OSINT demo' }, token);
     await loadCases();

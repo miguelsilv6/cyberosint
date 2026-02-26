@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+// Validação centralizada das variáveis de ambiente.
+// Falha no arranque se faltar configuração essencial.
 export const envSchema = z.object({
   APP_ENV: z.string(),
   API_PORT: z.coerce.number(),
@@ -27,6 +29,7 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 export function validateEnv(config: Record<string, unknown>) {
+  // Faz parse e devolve um erro legível para troubleshooting rápido.
   const result = envSchema.safeParse(config);
   if (!result.success) {
     throw new Error(

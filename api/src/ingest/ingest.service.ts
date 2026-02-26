@@ -12,16 +12,19 @@ export class IngestService {
     private audit: AuditService,
   ) {}
 
+  // Gera hash SHA-256 do conteúdo bruto/normalizado.
   private sha(data: string) {
     return createHash('sha256').update(data).digest('hex');
   }
 
+  // Restringe protocolos permitidos para reduzir risco em conectores.
   private validateProtocol(url: string) {
     const allowed = (process.env.INGEST_ALLOWED_PROTOCOLS || 'http,https').split(',');
     const p = new URL(url).protocol.replace(':', '');
     if (!allowed.includes(p)) throw new BadRequestException('Protocol not allowed');
   }
 
+  // Ingestão de URL: recolhe HTML, guarda raw no MinIO e regista trilha de auditoria.
   async ingestUrl(caseId: string, url: string, operatorId: string) {
     this.validateProtocol(url);
     const startedAt = new Date();
@@ -62,6 +65,7 @@ export class IngestService {
     return artifact;
   }
 
+  // Ingestão manual de texto, preservando proveniência e hash do raw.
   async ingestText(caseId: string, text: string, operatorId: string, title?: string) {
     const artifactId = randomUUID();
     const key = `${caseId}/${process.env.S3_PREFIX_RAW || 'raw'}/${artifactId}.txt`;

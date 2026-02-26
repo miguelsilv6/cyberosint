@@ -9,10 +9,12 @@ import { AuditService } from '../audit/audit.service';
 export class NormalizeService {
   constructor(private prisma: PrismaService, private storage: StorageService, private audit: AuditService) {}
 
+  // Hash do conteúdo normalizado para prova de integridade.
   private sha(data: string) {
     return createHash('sha256').update(data).digest('hex');
   }
 
+  // Normaliza artefacto (HTML -> texto), persiste e audita transformação.
   async normalize(artifactId: string, actorId: string) {
     const artifact = await this.prisma.artifact.findUniqueOrThrow({ where: { id: artifactId } });
     const raw = await this.storage.getObjectAsString(process.env.S3_BUCKET_EVIDENCE!, artifact.rawObjectKey);

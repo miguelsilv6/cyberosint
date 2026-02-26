@@ -5,10 +5,12 @@ import { PrismaService } from '../prisma/prisma.service';
 export class CasesService {
   constructor(private prisma: PrismaService) {}
 
+  // Lista casos por ordem temporal (mais recentes primeiro).
   list() {
     return this.prisma.case.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
+  // Cria um caso segregado por identificador único.
   create(data: { name: string; description?: string; createdById: string }) {
     return this.prisma.case.create({ data });
   }
