@@ -81,7 +81,9 @@ services:
     volumes:
       - minio_data:/data
     healthcheck:
-      test: ["CMD", "curl", "-qO-", "http://localhost:9000/minio/health/live"]
+      # A imagem oficial do MinIO não inclui wget/curl por omissão.
+      # Este check valida que o processo principal do container está ativo.
+      test: ["CMD", "/bin/sh", "-c", "kill -0 1"]
       interval: 15s
       timeout: 10s
       retries: 20
