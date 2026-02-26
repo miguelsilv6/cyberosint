@@ -20,7 +20,7 @@ MVP **forense-first** para OSINT assistida por IA, com foco em:
   - `5432` (postgres)
   - `7474/7687` (neo4j)
   - `9000/9001` (minio)
-  - `6379` (redis)
+  - `6380` (redis no host -> container 6379)
   - `11434` (ollama)
 
 ---
