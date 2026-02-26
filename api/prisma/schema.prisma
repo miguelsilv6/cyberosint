@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  analyst
+  viewer
+}
+
+enum ArtifactStatus {
+  RAW
+  NORMALIZED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+}
+
+model Case {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  createdById String
+  createdBy   User        @relation(fields: [createdById], references: [id])
+  artifacts   Artifact[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Artifact {
+  id               String         @id @default(uuid())
+  caseId           String
+  case             Case           @relation(fields: [caseId], references: [id])
+  sourceType       String
+  sourceUri        String
+  connector        String
+  title            String?
+  rawObjectKey     String
+  rawSha256        String
+  normalizedObjectKey String?
+  normalizedSha256 String?
+  status           ArtifactStatus @default(RAW)
+  operatorId       String
+  collectedAt      DateTime       @default(now())
+  audits           AuditEvent[]
+}
+
+model CollectionRun {
+  id          String   @id @default(uuid())
+  caseId      String
+  artifactId  String
+  connector   String
+  parameters  Json
+  startedAt   DateTime
+  endedAt     DateTime
+  operatorId  String
+}
+
+model AuditEvent {
+  id              String   @id @default(uuid())
+  caseId          String
+  artifactId      String?
+  eventType       String
+  actorId         String
+  payload         Json
+  currentHash     String
+  prevChainedHash String?
+  chainedHash     String
+  createdAt       DateTime @default(now())
+}
